@@ -2,6 +2,9 @@ import scrapy
 from bs4 import BeautifulSoup
 from lab2.items import FacultyItem,DepartmentItem,NewsItem
 
+from lab2.pipelines import SqlPipeline
+
+
 class KpiSpider(scrapy.Spider):
     name = "kpi"
     allowed_domains = ["kpi.ua"]
@@ -12,20 +15,21 @@ class KpiSpider(scrapy.Spider):
         fac_list = soup.find(class_="main-container")
 
         ul = fac_list.select('div > ul')[1]
-
+        image_urls=soup.find(name="img").get("src")
         for li in ul.find_all("li"):
             a = li.find("a")
             name = a.find(string=True, recursive=False)
             fac_link = f"https://kpi.ua{a.get('href')}"
             yield FacultyItem(
                 name=name,
-                url=fac_link
+                url=fac_link,
+                image_urls=[f"https://kpi.ua{image_urls}"],
             )
             yield scrapy.Request(
                 url=fac_link,
                 callback=self.parse_faculty,
                 meta={
-                    "faculty":name
+                    "faculty":name,
                 }
 
             )
@@ -43,7 +47,7 @@ class KpiSpider(scrapy.Spider):
                 )
                 yield scrapy.Request(
                     url=dep_url,
-                    callback=self.parse_news,#/////
+                    callback=self.parse_news,
                     meta={
                         "department":dep_name
                     }
@@ -59,7 +63,11 @@ class KpiSpider(scrapy.Spider):
                     name=li.span.find(string=True,recursive=False)
                 yield NewsItem(
                     name=name,
-                    department=response.meta.get("department")
+                    department=response.meta.get("department"),
+
                    )
 
+    def closed(self, reason):
 
+        pipeline = SqlPipeline()
+        pipeline.display_table()
