@@ -11,6 +11,9 @@ from scrapy.http import JsonRequest
 from scrapy.utils.serialize import ScrapyJSONEncoder
 from json import dumps, loads
 
+from lab2.items import DepartmentItem
+
+
 class Lab2SpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
@@ -38,15 +41,13 @@ class Lab2SpiderMiddleware:
         url = spider.settings.get("POST_URL")
         for i in result:
             # якщо павук повернув item
-            if is_item(i):
+            if is_item(i) and isinstance(i,DepartmentItem):
                 # надсилаємо JSON POST запит
                 yield JsonRequest(
                     url=url,  # на адресу сервера,
                     method="POST",
                     # в заголовок додаємо токен
-                    headers={
-                        "Authorization": f"Bearer {self.token}"
-                    },
+
                     # в тіло запиту записуємо декодовну item
                     body=self.item_to_json(i),
                     # вказуєм обробник відповіді. Якщо нічого не вказати то обробку передасть в spider.parse
@@ -58,9 +59,9 @@ class Lab2SpiderMiddleware:
 
     def item_to_json(self, item):
         body = {
-            "Name": item.get("name"),
-            "Department": item.get("department"),
-            "Url": item.get("url")
+            "name": item.get("name"),
+            "faculty": item.get("faculty"),
+            "url": item.get("url")
         }
         return self.encode(body)
 
@@ -79,29 +80,11 @@ class Lab2SpiderMiddleware:
         # similarly to the process_spider_output() method, except
         # that it doesn’t have a response associated.
 
-        # Must return only requests (not items).
-        url = spider.settings.get("TOKEN_URL")
-        login = spider.settings.get("TOKEN_LOGIN")
-        password = spider.settings.get("TOKEN_PASSWORD")
 
-        yield JsonRequest(
-            url=url,
-            method="POST",
-            body=dumps({
-                "Login": login,
-                "Password": password
-            }),
-            # вказуєм обробник відповіді. Якщо нічого не вказати то обробку передасть в spider.parse
-            callback=self.save_token
-        )
 
         for r in start_requests:
             yield r
 
-    def save_token(self, response):
-        token = loads(response.body).get("token")
-        print(f"Token: {token}")
-        self.token = token
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)

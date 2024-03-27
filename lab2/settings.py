@@ -45,13 +45,13 @@ DOWNLOAD_DELAY = 1
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 SPIDER_MIDDLEWARES = {
-#  "lab2.middlewares.Lab2SpiderMiddleware": 543,
+  "lab2.middlewares.Lab2SpiderMiddleware": 543,
 }
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-   "lab2.middlewares.Lab2DownloaderMiddleware": 543,
+  # "lab2.middlewares.Lab2DownloaderMiddleware": 543,
 }
 
 # Enable or disable extensions
@@ -94,7 +94,5 @@ IMAGES_EXPIRES = 0
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
-TOKEN_URL = "https://localhost:44375/api/users/login"
-TOKEN_LOGIN = "Login"
-TOKEN_PASSWORD = "Password"
-POST_URL = "https://localhost:44375/api/kpi/"
+
+POST_URL = "http://localhost:3003/kpi/"

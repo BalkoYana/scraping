@@ -7,7 +7,7 @@ from lab2.pipelines import SqlPipeline
 
 class KpiSpider(scrapy.Spider):
     name = "kpi"
-    allowed_domains = ["kpi.ua"]
+    allowed_domains = ["kpi.ua","localhost"]
     start_urls = ["https://kpi.ua/kpi_faculty"]
 
     def parse(self,response):

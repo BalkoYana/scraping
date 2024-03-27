@@ -32,8 +32,8 @@ app.post('/kpi', (req, res) => {
     const data = req.body;
 
     // Вставляємо дані в таблицю 'items'
-    const query = 'INSERT INTO items (name, department, url) VALUES (?, ?, ?)';
-    db.query(query, [data.name, data.department, data.url], (err, result) => {
+    const query = 'INSERT INTO items (name,department, url) VALUES (?, ?, ?)';
+    db.query(query, [data.name, data.faculty, data.url], (err, result) => {
         if (err) throw err;
         console.log(result);
         res.send('Дані успішно збережено.');
